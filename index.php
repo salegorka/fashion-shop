@@ -1,3 +1,9 @@
+<?php
+
+    include $_SERVER['DOCUMENT_ROOT'] . '/include/session/sessionStart.php';
+
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -22,27 +28,7 @@
   <script src="js/scripts.js" defer=""></script>
 </head>
 <body>
-<header class="page-header">
-  <a class="page-header__logo" href="#">
-    <img src="img/logo.svg" alt="Fashion">
-  </a>
-  <nav class="page-header__menu">
-    <ul class="main-menu main-menu--header">
-      <li>
-        <a class="main-menu__item" href="#">Главная</a>
-      </li>
-      <li>
-        <a class="main-menu__item" href="#">Новинки</a>
-      </li>
-      <li>
-        <a class="main-menu__item active">Sale</a>
-      </li>
-      <li>
-        <a class="main-menu__item" href="delivery.html">Доставка</a>
-      </li>
-    </ul>
-  </nav>
-</header>
+<?php include $_SERVER['DOCUMENT_ROOT'] . '/templates/header.php'; ?>
 <main class="shop-page">
   <header class="intro">
     <div class="intro__wrapper">
@@ -297,31 +283,7 @@
     </div>
   </section>
 </main>
-<footer class="page-footer">
-  <div class="container">
-    <a class="page-footer__logo" href="#">
-      <img src="img/logo--footer.svg" alt="Fashion">
-    </a>
-    <nav class="page-footer__menu">
-      <ul class="main-menu main-menu--footer">
-        <li>
-          <a class="main-menu__item" href="#">Главная</a>
-        </li>
-        <li>
-          <a class="main-menu__item" href="#">Новинки</a>
-        </li>
-        <li>
-          <a class="main-menu__item">Sale</a>
-        </li>
-        <li>
-          <a class="main-menu__item" href="delivery.html">Доставка</a>
-        </li>
-      </ul>
-    </nav>
-    <address class="page-footer__copyright">
-      © Все права защищены
-    </address>
-  </div>
-</footer>
+<?php include $_SERVER['DOCUMENT_ROOT'] . '/templates/footer.php'; ?>
 </body>
 </html>
+

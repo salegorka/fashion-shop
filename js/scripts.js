@@ -283,8 +283,46 @@ if (addList) {
 
     evt.preventDefault();
 
-    form.hidden = true;
-    popupEnd.hidden = false;
+// Отправка запроса на добавление товара в бд 
+    const data = new FormData(form);
+    console.log(form);
+ 
+    let url = '';
+
+    if (form.getAttribute('name') === 'add') {
+      url = '/api/createGood.php';
+    } else if (form.getAttribute('name') === 'change') {
+      url = '/api/updateGood.php';
+      data.append('id', button.dataset.id);
+      console.log(button.dataset.id);
+    };
+
+    $.ajax({
+      url: url,
+      type: 'POST',
+      data: data,
+      cache: false,
+      dataType: 'json',
+      processData: false,
+      xhrFields: { withCredentials:true },
+      contentType: false,
+      success: function ( respond, textStatus, jqXHR) {
+        if (respond.error === undefined) {
+          console.log(textStatus, respond);
+          form.hidden = true;
+          popupEnd.hidden = false;
+        } else {
+          let errorField = form.querySelector('.custom_form__error-field');
+          errorField.innerText = respond.error;
+          errorField.hidden = false;
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log("Ошибка AJAX запроса " + textStatus);
+      }
+    })
+
+    
 
   })
 
@@ -299,7 +337,30 @@ if (productsList) {
 
     if (target.classList && target.classList.contains('product-item__delete')) {
 
-      productsList.removeChild(target.parentElement);
+      console.log(target.dataset['id']);
+
+      let url = '/api/deleteGood.php';
+      let data = { id: target.dataset['id']};
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        cache: false,
+        dataType: 'json',
+        xhrFields: { withCredentials:true },
+        success: function ( respond, textStatus, jqXHR) {
+          if (respond.success == true) {
+            productsList.removeChild(target.parentElement);
+          } else {
+            console.log(textStatus, respond);
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log("Ошибка AJAX запроса " + textStatus);
+        }
+      })
+      
+      //  productsList.removeChild(target.parentElement);
 
     }
 
