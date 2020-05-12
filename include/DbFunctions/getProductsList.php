@@ -49,3 +49,44 @@ function getCategories($connect, $indexs) {
 
     return $categoriesArr;
 }
+
+/* 
+
+
+
+*/
+function readGoods($connect, $page, $category = 0, $price_d = 0, $price_u = 40000, $sale = 0, $new = 0, $order_by='', $sort='ASC') {
+    
+    $sql = null;
+
+    if ($category == 0) {
+        $sql = "select * from goods where";
+    } else {
+        $sql = sprintf("select * from goods inner join category_good on good_id=goods.id where category_id = %d &&", mysqli_real_escape_string($connect, $category));
+    }
+
+    $sql = $sql . sprintf(" price > %d && price < %d", mysqli_real_escape_string($connect, $price_d), mysqli_real_escape_string($connect, $price_u));
+
+    $sql = $sql . ($sale === 0 ? "" : " && sale = 1");
+    $sql = $sql . ($new === 0 ? "" : " && new = 1");
+
+    $sql = $sql . ($order_by === '' ? "" : sprintf(" order by %s %s", mysqli_real_escape_string($connect, $order_by), mysqli_real_escape_string($connect, $sort)));
+
+    $DownLimit = ($page - 1) * 9;
+    $UpLimit = $page * 9;
+
+    $sql = $sql . sprintf(" limit %d, %d;", $DownLimit, $UpLimit);
+
+    $result = mysqli_query($connect, $sql);
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+}
+
+/*
+
+
+
+*/
+// function getAllGoodsWithCategory($connect, $page, $category = 0, $price_d = 0, $price_u = 40000, $sale = 0, $new = 0, $order_by='', $sort='ASC') {
+    
+// }

@@ -1,12 +1,12 @@
 <?php 
     include $_SERVER['DOCUMENT_ROOT'] . '/include/session/sessionStart.php';
     include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/connectToDb.php';
-    include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/getCategories.php';
+    include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/readCategories.php';
     include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/getProduct.php';
     include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/getProductsList.php';
 
     $connect = getConnect();
-    $categories = getAllCategories($connect);
+    $categories = readCategories($connect);
 
     $product = null;
 

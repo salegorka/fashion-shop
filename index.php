@@ -1,6 +1,11 @@
 <?php
 
-    include $_SERVER['DOCUMENT_ROOT'] . '/include/session/sessionStart.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/include/session/sessionStart.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/connectToDb.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/readCategories.php';
+
+$connect = getConnect();
+$categories = readCategories($connect);
 
 ?>
 
@@ -15,17 +20,17 @@
 
   <meta name="theme-color" content="#393939">
 
-  <link rel="preload" href="img/intro/coats-2018.jpg" as="image">
-  <link rel="preload" href="fonts/opensans-400-normal.woff2" as="font">
-  <link rel="preload" href="fonts/roboto-400-normal.woff2" as="font">
-  <link rel="preload" href="fonts/roboto-700-normal.woff2" as="font">
+  <link rel="preload" href="/img/intro/coats-2018.jpg" as="image">
+  <link rel="preload" href="/fonts/opensans-400-normal.woff2" as="font">
+  <link rel="preload" href="/fonts/roboto-400-normal.woff2" as="font">
+  <link rel="preload" href="/fonts/roboto-700-normal.woff2" as="font">
 
-  <link rel="icon" href="img/favicon.png">
-  <link rel="stylesheet" href="css/style.min.css">
+  <link rel="icon" href="/img/favicon.png">
+  <link rel="stylesheet" href="/css/style.min.css">
 
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script src="js/scripts.js" defer=""></script>
+  <script src="/js/scripts.js" defer=""></script>
 </head>
 <body>
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/templates/header.php'; ?>
@@ -43,20 +48,13 @@
         <b class="filter__title">Категории</b>
         <ul class="filter__list">
           <li>
-            <a class="filter__list-item active" href="#">Все</a>
+            <a class="filter__list-item active" href="/index.php" data-id='0' data-name='All'>Все</a>
           </li>
-          <li>
-            <a class="filter__list-item" href="#">Женщины</a>
+          <?php foreach($categories as $category): ?>
+           <li>
+            <a class="filter__list-item" href="<?= "/category/" . $category['eng_name'] ?>" data-id='<?= $category['id'] ?>' data-name='<?= $category['eng_name'] ?>'><?= $category['name'] ?></a>
           </li>
-          <li>
-            <a class="filter__list-item" href="#">Мужчины</a>
-          </li>
-          <li>
-            <a class="filter__list-item" href="#">Дети</a>
-          </li>
-          <li>
-            <a class="filter__list-item" href="#">Аксессуары</a>
-          </li>
+          <?php endforeach; ?>
         </ul>
       </div>
         <div class="filter__wrapper">
@@ -97,80 +95,11 @@
             <option value="woman">По убыванию</option>
           </select>
         </div>
-        <p class="shop__sorting-res">Найдено <span class="res-sort">858</span> моделей</p>
+        <p class="shop__sorting-res">Найдено <span class="res-sort"></span></p>
       </section>
       <section class="shop__list">
-        <article class="shop__item product" tabindex="0">
-          <div class="product__image">
-            <img src="img/products/product-1.jpg" alt="product-name">
-          </div>
-          <p class="product__name">Платье со складками</p>
-          <span class="product__price">2 999 руб.</span>
-        </article>
-        <article class="shop__item product" tabindex="0">
-          <div class="product__image">
-            <img src="img/products/product-2.jpg" alt="product-name">
-          </div>
-          <p class="product__name">Платье со складками</p>
-          <span class="product__price">2 999 руб.</span>
-        </article>
-        <article class="shop__item product" tabindex="0">
-          <div class="product__image">
-            <img src="img/products/product-3.jpg" alt="product-name">
-          </div>
-          <p class="product__name">Платье со складками</p>
-          <span class="product__price">2 999 руб.</span>
-        </article>
-        <article class="shop__item product" tabindex="0">
-          <div class="product__image">
-            <img src="img/products/product-4.jpg" alt="product-name">
-          </div>
-          <p class="product__name">Платье со складками</p>
-          <span class="product__price">2 999 руб.</span>
-        </article>
-        <article class="shop__item product" tabindex="0">
-          <div class="product__image">
-            <img src="img/products/product-5.jpg" alt="product-name">
-          </div>
-          <p class="product__name">Платье со складками</p>
-          <span class="product__price">2 999 руб.</span>
-        </article>
-        <article class="shop__item product" tabindex="0">
-          <div class="product__image">
-            <img src="img/products/product-6.jpg" alt="product-name">
-          </div>
-          <p class="product__name">Платье со складками</p>
-          <span class="product__price">2 999 руб.</span>
-        </article>
-        <article class="shop__item product" tabindex="0">
-          <div class="product__image">
-            <img src="img/products/product-7.jpg" alt="product-name">
-          </div>
-          <p class="product__name">Платье со складками</p>
-          <span class="product__price">2 999 руб.</span>
-        </article>
-        <article class="shop__item product" tabindex="0">
-          <div class="product__image">
-            <img src="img/products/product-8.jpg" alt="product-name">
-          </div>
-          <p class="product__name">Платье со складками</p>
-          <span class="product__price">2 999 руб.</span>
-        </article>
-        <article class="shop__item product" tabindex="0">
-          <div class="product__image">
-            <img src="img/products/product-9.jpg" alt="product-name">
-          </div>
-          <p class="product__name">Платье со складками</p>
-          <span class="product__price">2 999 руб.</span>
-        </article>
       </section>
       <ul class="shop__paginator paginator">
-        <li>
-          <a class="paginator__item">1</a>
-        </li>
-        <li>
-          <a class="paginator__item" href="">2</a>
-        </li>
       </ul>
     </div>
   </section>

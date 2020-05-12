@@ -16,8 +16,8 @@ function getMenuList($isLogIn) {
     } else {
         return [
             ['Главная', '/'],
-            ['Новинки', '#'],
-            ['Sale', '#'],
+            ['Новинки', '/new'],
+            ['Sale', '/sale'],
             ['Доставка', '#']
         ];
     }

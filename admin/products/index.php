@@ -65,6 +65,7 @@
         </li>
     <?php endforeach; ?>
   </ul>
+  <!-- Добавить пагинацию -->
   <ul class="shop__paginator paginator">
     <li>
         <a class="paginator__item">1</a>

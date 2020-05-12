@@ -1,5 +1,144 @@
 'use strict';
 
+// Класс реализующий логику фильтра товаров, а также логику отправки запросов за товарами
+
+class Filter {
+
+  constructor(categoryId, page, catSale, catNew) {
+    this.categoryId = categoryId;
+    this.page = page;
+    this.catSale = catSale;
+    this.catNew = catNew;
+  }
+
+  sendRequestForGoods(callback) {
+
+    let url = "/api/getGoods.php"
+    url = url + `?category_id=${this.categoryId}`;
+    url = url + `&page=${this.page}`;
+    url = url + `$sale=${this.catSale}`;
+    url = url + `$new=${this.catNew}`;
+
+    $.ajax({
+      url: url,
+      type: 'GET',
+      dataType: "html",
+      success: callback,
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log("Ошибка AJAX запроса " + textStatus);
+      }
+    })
+
+  }
+
+  sendRequestForCount(callback) {
+
+    let url = "/api/countGoods.php";
+    url = url + `?category_id=${this.categoryId}`;
+    url = url + `$sale=${this.catSale}`;
+    url = url + `$new=${this.catNew}`;
+
+    $.ajax({
+      url: url,
+      type: 'GET',
+      dataType: "json",
+      success: callback,
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log("Ошибка AJAX запроса " + textStatus);
+      }
+    })
+
+  }
+
+}
+
+class Pagination {
+
+  constructor(pageCount) {
+    this.pageCount = pageCount;
+  }
+
+  create(paginationEl, currentPage) {
+    for (let i = 1; i <= this.pageCount; i++) {
+      let newEl = document.createElement('li');
+      newEl.innerHTML = currentPage == i ? `<a class="paginator__item active-page" data-page='${i}'>${i}</a>` : 
+      `<a class="paginator__item" data-page='${i}' href='##'>${i}</a>`;
+      paginationEl.append(newEl);
+    }
+
+    paginationEl.addEventListener('click', (event) => {
+      event.preventDefault;
+      if (event.target.dataset['page'] != undefined) {
+        let activePage = document.querySelector(".active-page");
+        activePage.setAttribute('href', '##');
+        activePage.classList.remove("active-page");
+        Goodfilter.page = event.target.dataset['page'];
+        event.target.removeAttribute('href');
+        event.target.classList.add("active-page");
+        Goodfilter.sendRequestForGoods(function (respond, textStatus) {
+          shopList.innerHTML = respond;
+        })
+      } else {
+        return false;
+      }
+    }) 
+  }
+
+}
+
+// Инициализация фильтра
+
+// Парсинг url чтобы получить значение категории или раздел новинки или распродажа
+
+let categoryName = location.pathname.split('/')[2];
+let categoryId;
+let catSale = 0;
+let catNew = 0;
+if (categoryName === undefined) {
+  categoryId = 0;
+  if (location.pathname.split('/')[1] === 'new') {
+    catNew = 1;
+  }
+  if (location.pathname.split('/')[1] === 'sale') {
+    catSale = 1;
+  }
+} else {
+  let categoryList = document.querySelectorAll(".filter__list-item");
+  categoryList.forEach((value) => {
+    value.classList.remove("active");
+    if (value.dataset['name'] === categoryName) {
+      value.classList.add("active");
+      categoryId = value.dataset['id'];
+    }
+  })
+}
+
+let Goodfilter = new Filter(categoryId, 1, catSale, catNew);
+
+
+let shopFilter = document.querySelector(".shop__filter");
+if (shopFilter) {
+  let buttonSubmit = shopFilter.querySelector(".button");
+
+  //Отправка запросов при нажатии на кнопку "Применить"
+
+  buttonSubmit.addEventListener('click' , (event) => {
+    Goodfilter.sendRequestForCount(function (respond, textStatus) {
+      let resSort = document.querySelector(".res-sort");
+      resSort.innerText = respond.text;
+
+      // создание переключателя страниц
+      let pagination = new Pagination(Math.ceil(respond.count / 9));
+      pagination.create(document.querySelector(".shop__paginator"), Goodfilter.page);
+
+    })
+    Goodfilter.sendRequestForGoods(function (respond, textStatus) {
+      shopList.innerHTML = respond;
+    })
+  })
+}
+
+
 const toggleHidden = (...fields) => {
 
   fields.forEach((field) => {
@@ -105,6 +244,25 @@ if (filterWrapper) {
 
 const shopList = document.querySelector('.shop__list');
 if (shopList) {
+
+  // Отправка запроса на загрузку товаров при загрузке старницы и для подсчета количества товаров
+
+  window.onload = (event) => {
+    Goodfilter.sendRequestForCount(function (respond, textStatus) {
+      let resSort = document.querySelector(".res-sort");
+      resSort.innerText = respond.text;
+
+      // создание переключателя страниц
+      let pagination = new Pagination(Math.ceil(respond.count / 9));
+      pagination.create(document.querySelector(".shop__paginator"), Goodfilter.page);
+
+    })
+    Goodfilter.sendRequestForGoods(function (respond, textStatus) {
+      shopList.innerHTML = respond;
+    })
+  }
+ 
+
 
   shopList.addEventListener('click', (evt) => {
 
@@ -391,3 +549,4 @@ if (document.querySelector('.shop-page')) {
   });
 
 }
+
