@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule (^category/.*$) /index.php [L]
+RewriteRule (^new$) /index.php [L]
+RewriteRule (^sale$) /index.php [L]

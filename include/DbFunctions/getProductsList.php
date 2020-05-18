@@ -67,10 +67,10 @@ function readGoods($connect, $page, $category = 0, $price_d = 0, $price_u = 4000
 
     $sql = $sql . sprintf(" price > %d && price < %d", mysqli_real_escape_string($connect, $price_d), mysqli_real_escape_string($connect, $price_u));
 
-    $sql = $sql . ($sale === 0 ? "" : " && sale = 1");
-    $sql = $sql . ($new === 0 ? "" : " && new = 1");
+    $sql = $sql . ($sale == 0 ? "" : " && sale = 1");
+    $sql = $sql . ($new == 0 ? "" : " && new = 1");
 
-    $sql = $sql . ($order_by === '' ? "" : sprintf(" order by %s %s", mysqli_real_escape_string($connect, $order_by), mysqli_real_escape_string($connect, $sort)));
+    $sql = $sql . ($order_by == '' ? "" : sprintf(" order by %s %s", mysqli_real_escape_string($connect, $order_by), mysqli_real_escape_string($connect, $sort)));
 
     $DownLimit = ($page - 1) * 9;
     $UpLimit = $page * 9;

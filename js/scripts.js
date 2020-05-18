@@ -4,20 +4,28 @@
 
 class Filter {
 
-  constructor(categoryId, page, catSale, catNew) {
+  constructor(categoryId, page, catSale, catNew, priceLow, priceHigh, order, sort) {
     this.categoryId = categoryId;
     this.page = page;
     this.catSale = catSale;
     this.catNew = catNew;
+    this.priceLow = priceLow;
+    this.priceHigh = priceHigh;
+    this.order = order;
+    this.sort = sort;
   }
 
   sendRequestForGoods(callback) {
 
-    let url = "/api/getGoods.php"
+    let url = "/api/getGoods.php";
     url = url + `?category_id=${this.categoryId}`;
     url = url + `&page=${this.page}`;
-    url = url + `$sale=${this.catSale}`;
-    url = url + `$new=${this.catNew}`;
+    url = url + `&priceLow=${this.priceLow}`;
+    url = url + `&priceHigh=${this.priceHigh}`;
+    url = url + `&sale=${this.catSale}`;
+    url = url + `&new=${this.catNew}`;
+    url = url + `&order=${this.order}`;
+    url = url + `&sort=${this.sort}`;
 
     $.ajax({
       url: url,
@@ -35,8 +43,10 @@ class Filter {
 
     let url = "/api/countGoods.php";
     url = url + `?category_id=${this.categoryId}`;
-    url = url + `$sale=${this.catSale}`;
-    url = url + `$new=${this.catNew}`;
+    url = url + `&priceLow=${this.priceLow}`;
+    url = url + `&priceHigh=${this.priceHigh}`;
+    url = url + `&sale=${this.catSale}`;
+    url = url + `&new=${this.catNew}`;
 
     $.ajax({
       url: url,
@@ -52,6 +62,8 @@ class Filter {
 
 }
 
+// Класс реализующий логику пагинации
+
 class Pagination {
 
   constructor(pageCount) {
@@ -59,6 +71,7 @@ class Pagination {
   }
 
   create(paginationEl, currentPage) {
+    paginationEl.innerHTML = "";
     for (let i = 1; i <= this.pageCount; i++) {
       let newEl = document.createElement('li');
       newEl.innerHTML = currentPage == i ? `<a class="paginator__item active-page" data-page='${i}'>${i}</a>` : 
@@ -86,7 +99,7 @@ class Pagination {
 
 }
 
-// Инициализация фильтра
+
 
 // Парсинг url чтобы получить значение категории или раздел новинки или распродажа
 
@@ -113,21 +126,56 @@ if (categoryName === undefined) {
   })
 }
 
-let Goodfilter = new Filter(categoryId, 1, catSale, catNew);
+// Инициализация фильтра
+
+let Goodfilter = new Filter(categoryId, 1, catSale, catNew, 0, 40000, "", "ASC");
 
 
 let shopFilter = document.querySelector(".shop__filter");
 if (shopFilter) {
-  let buttonSubmit = shopFilter.querySelector(".button");
+
+  // Изменение параметров фильтра для чекбоксов новинка и распродажа
+
+  let inputNew = shopFilter.querySelector('input[id="new"]');
+  console.log(inputNew);
+  inputNew.addEventListener('change', (event) => {
+    if(inputNew.checked) {
+      Goodfilter.catNew = 1;
+    }
+  })
+
+  let inputSale = shopFilter.querySelector('input[id="sale"]');
+  console.log(inputSale);
+  inputSale.addEventListener('change', (event) => {
+    if(inputSale.checked) {
+      Goodfilter.catSale = 1;
+    }
+  })
+
+  // Изменение параметров фильтра при изменение порядка и поля сортировки
+
+  let shopSorting = document.querySelector(".shop__sorting");
+  let selectSortCategory = shopSorting.querySelector('select[name="category"]');
+  selectSortCategory.addEventListener('change', (event) => {
+    Goodfilter.order = event.target.value;
+  })
+  let selectSort = shopSorting.querySelector('select[name="sort"]');
+  selectSort.addEventListener('change', (event) => {
+    Goodfilter.sort = event.target.value;
+  })
 
   //Отправка запросов при нажатии на кнопку "Применить"
 
+  let buttonSubmit = shopFilter.querySelector(".button");
+
   buttonSubmit.addEventListener('click' , (event) => {
+    event.preventDefault();
     Goodfilter.sendRequestForCount(function (respond, textStatus) {
       let resSort = document.querySelector(".res-sort");
       resSort.innerText = respond.text;
 
       // создание переключателя страниц
+      console.log(respond.count);
       let pagination = new Pagination(Math.ceil(respond.count / 9));
       pagination.create(document.querySelector(".shop__paginator"), Goodfilter.page);
 
@@ -242,6 +290,34 @@ if (filterWrapper) {
 
 }
 
+
+//
+
+let order = {
+  delivery: "dev-no",
+  pay: "card"
+};
+
+// Обработчик для полей формы заказа
+
+let pageOrder = document.querySelector(".shop-page__order");
+if (pageOrder) {
+
+  pageOrder.addEventListener('change', (event) => {
+
+    let name = event.target.getAttribute('name');
+    let value = event.target.value;
+
+    order = {
+      ...order,
+      [name]: value
+    }
+
+  })
+
+}
+
+
 const shopList = document.querySelector('.shop__list');
 if (shopList) {
 
@@ -269,6 +345,20 @@ if (shopList) {
     const prod = evt.path || (evt.composedPath && evt.composedPath());;
 
     if (prod.some(pathItem => pathItem.classList && pathItem.classList.contains('shop__item'))) {
+
+      // Добавление в заказ информации о товаре
+
+      console.log(evt.target);
+
+      let productName = evt.target.querySelector(".product__name").innerText;
+      let productPrice = evt.target.querySelector(".product__price").innerText;
+      productPrice = productPrice.slice(0, productPrice.length - 4);
+
+      order = {
+        ...order,
+        productName,
+        productPrice,
+      }
 
       const shopOrder = document.querySelector('.shop-page__order');
 
@@ -312,29 +402,52 @@ if (shopList) {
 
           evt.preventDefault();
 
-          toggleHidden(shopOrder, popupEnd);
+          // Отправка заказа
 
-          popupEnd.classList.add('fade');
-          setTimeout(() => popupEnd.classList.remove('fade'), 1000);
+          let url = '/api/createOrder.php';
+          let data = order;
+          $.ajax({
+            url: url,
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            success: function ( respond, textStatus, jqXHR) {
+              if (respond.success == true) {
 
-          window.scroll(0, 0);
+                toggleHidden(shopOrder, popupEnd);
 
-          const buttonEnd = popupEnd.querySelector('.button');
+                popupEnd.classList.add('fade');
+                setTimeout(() => popupEnd.classList.remove('fade'), 1000);
 
-          buttonEnd.addEventListener('click', () => {
+                window.scroll(0, 0);
+
+                const buttonEnd = popupEnd.querySelector('.button');
+
+                buttonEnd.addEventListener('click', () => {
 
 
-            popupEnd.classList.add('fade-reverse');
+                  popupEnd.classList.add('fade-reverse');
 
-            setTimeout(() => {
+                  setTimeout(() => {
 
-              popupEnd.classList.remove('fade-reverse');
+                    popupEnd.classList.remove('fade-reverse');
 
-              toggleHidden(popupEnd, document.querySelector('.intro'), document.querySelector('.shop'));
+                    toggleHidden(popupEnd, document.querySelector('.intro'), document.querySelector('.shop'));
 
-            }, 1000);
+                  }, 1000);
 
-          });
+                });
+
+
+              } else {
+                console.log(textStatus, respond);
+              }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              console.log("Ошибка AJAX запроса " + textStatus);
+            }
+          })
+
 
         } else {
           window.scroll(0, 0);
@@ -539,6 +652,9 @@ if (document.querySelector('.shop-page')) {
       $('.min-price').text($('.range__line').slider('values', 0) + ' руб.');
       $('.max-price').text($('.range__line').slider('values', 1) + ' руб.');
 
+      Goodfilter.priceLow = $('.range__line').slider('values', 0);
+      Goodfilter.priceHigh = $('.range__line').slider('values', 1);
+
     },
     slide: function(event, ui) {
 
@@ -549,4 +665,6 @@ if (document.querySelector('.shop-page')) {
   });
 
 }
+
+
 

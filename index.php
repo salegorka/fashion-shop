@@ -89,10 +89,10 @@ $categories = readCategories($connect);
           </select>
         </div>
         <div class="shop__sorting-item custom-form__select-wrapper">
-          <select class="custom-form__select" name="prices">
+          <select class="custom-form__select" name="sort">
             <option hidden="">Порядок</option>
-            <option value="all">По возрастанию</option>
-            <option value="woman">По убыванию</option>
+            <option value="asc">По возрастанию</option>
+            <option value="desc">По убыванию</option>
           </select>
         </div>
         <p class="shop__sorting-res">Найдено <span class="res-sort"></span></p>
@@ -126,11 +126,11 @@ $categories = readCategories($connect);
               <p class="custom-form__input-label">Отчество</p>
             </label>
             <label class="custom-form__input-wrapper" for="phone">
-              <input id="phone" class="custom-form__input" type="tel" name="thirdName" required="">
+              <input id="phone" class="custom-form__input" type="tel" name="phone" required="">
               <p class="custom-form__input-label">Телефон <span class="req">*</span></p>
             </label>
             <label class="custom-form__input-wrapper" for="email">
-              <input id="email" class="custom-form__input" type="email" name="thirdName" required="">
+              <input id="email" class="custom-form__input" type="email" name="email" required="">
               <p class="custom-form__input-label">Почта <span class="req">*</span></p>
             </label>
           </div>
@@ -140,7 +140,7 @@ $categories = readCategories($connect);
           <input id="dev-no" class="custom-form__radio" type="radio" name="delivery" value="dev-no" checked="">
           <label for="dev-no" class="custom-form__radio-label">Самовывоз</label>
           <input id="dev-yes" class="custom-form__radio" type="radio" name="delivery" value="dev-yes">
-          <label for="dev-yes" class="custom-form__radio-label">Курьерная доставка</label>
+          <label for="dev-yes" class="custom-form__radio-label">Курьерская доставка</label>
         </fieldset>
         <div class="shop-page__delivery shop-page__delivery--no">
           <table class="custom-table">
