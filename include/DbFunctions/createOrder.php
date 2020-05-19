@@ -6,8 +6,8 @@
 
 function createOrder($connect, $orderInfo) {
 
-    $sql = sprintf("insert into orders (fio, email, phone, delivery, address, comment, payment, json, price, status) 
-values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+    $sql = sprintf("insert into orders (fio, email, phone, delivery, address, comment, payment, json, price, status, created_at) 
+values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', NOW())",
         mysqli_real_escape_string($connect, $orderInfo['fio']),
         mysqli_real_escape_string($connect, $orderInfo['email']),
         mysqli_real_escape_string($connect, $orderInfo['phone']),

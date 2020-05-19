@@ -482,16 +482,48 @@ if (pageOrderList) {
 
     if (evt.target.classList && evt.target.classList.contains('order-item__btn')) {
 
+      let id = evt.target.dataset['id'];
+
       const status = evt.target.previousElementSibling;
+      let newStatus = '';
 
       if (status.classList && status.classList.contains('order-item__info--no')) {
-        status.textContent = 'Выполнено';
+        newStatus = 'Выполнено';
       } else {
-        status.textContent = 'Не выполнено';
+        newStatus = 'Не выполнено';
       }
 
-      status.classList.toggle('order-item__info--no');
-      status.classList.toggle('order-item__info--yes');
+      // отправка запроса на изменение статуса заказа
+
+      let url = '/api/changeOrder.php';
+      let data = { id , newStatus };
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        cache: false,
+        dataType: 'json',
+        xhrFields: { withCredentials:true },
+        success: function (respond, textStatus) {
+          console.log(respond);
+          if (respond.success == true) {
+            const status = evt.target.previousElementSibling;
+
+            if (status.classList && status.classList.contains('order-item__info--no')) {
+              status.textContent = 'Выполнено';
+            } else {
+              status.textContent = 'Не выполнено';
+            }
+
+            status.classList.toggle('order-item__info--no');
+            status.classList.toggle('order-item__info--yes');
+
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log("Ошибка AJAX запроса " + textStatus);
+        }
+      })
 
     }
 

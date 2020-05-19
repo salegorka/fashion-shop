@@ -10,15 +10,15 @@ function getMenuList($isLogIn) {
         return [
             ['Главная', '/'],
             ['Товары', '/admin/products'],
-            ['Заказы', '#'],
-            ['Выйти', '#']
+            ['Заказы', '/admin/orders'],
+            ['Выйти', '/admin/logout']
         ];
     } else {
         return [
             ['Главная', '/'],
             ['Новинки', '/new'],
             ['Sale', '/sale'],
-            ['Доставка', '#']
+            ['Доставка', '/delivery']
         ];
     }
 }
