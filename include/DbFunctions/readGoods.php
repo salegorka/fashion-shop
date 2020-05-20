@@ -2,7 +2,7 @@
 
 /*
 
-    Функция для получения списка товаров из БД. Возвращает список товаров для одной страницы на сайте.
+    Функция для получения списка товаров из БД. Возвращает список товаров для одной страницы на сайте в разделе товаров.
 
 */
 function getProductsList($connect, $page = 1) {
@@ -12,6 +12,18 @@ function getProductsList($connect, $page = 1) {
     $result = mysqli_query($connect, $sql);
     $resultArr = mysqli_fetch_all($result, MYSQLI_ASSOC);
     return $resultArr;
+}
+
+/*
+ *
+ *  Функция для подсчета общего количества товаров в бд
+ *
+ */
+
+function countAllGoods($connect) {
+    $sql = "select count(*) from goods;";
+    $result = mysqli_query($connect, $sql);
+    return mysqli_fetch_all($result, MYSQLI_ASSOC)[0]["count(*)"];
 }
 
 /*
@@ -81,12 +93,3 @@ function readGoods($connect, $page, $category = 0, $price_d = 0, $price_u = 4000
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 }
-
-/*
-
-
-
-*/
-// function getAllGoodsWithCategory($connect, $page, $category = 0, $price_d = 0, $price_u = 40000, $sale = 0, $new = 0, $order_by='', $sort='ASC') {
-    
-// }

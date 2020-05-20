@@ -1,7 +1,7 @@
 <?php
 
 include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/connectToDb.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/getProductsList.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/readGoods.php';
 
 $connect = getConnect();
 $products = readGoods($connect, $_GET['page'], $_GET['category_id'], $_GET['priceLow'], $_GET['priceHigh'],

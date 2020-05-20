@@ -1,11 +1,17 @@
 <?php
 
     include $_SERVER['DOCUMENT_ROOT'] . '/include/session/sessionStart.php';
+    include $_SERVER['DOCUMENT_ROOT'] . '/include/rights/checkUserRights.php';
     include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/connectToDb.php';
-    include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/getProductsList.php';
+    include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/readGoods.php';
 
     $connect = getConnect();
-    $products = getProductsList($connect);
+
+    $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+    $count = countAllGoods($connect);
+    $pageCount = ceil($count / 9);
+
+    $products = getProductsList($connect, $currentPage);
     $productsIndexs = [];
     foreach($products as $product) {
         $productsIndexs[] = $product['id'];
@@ -65,14 +71,12 @@
         </li>
     <?php endforeach; ?>
   </ul>
-  <!-- Добавить пагинацию -->
   <ul class="shop__paginator paginator">
-    <li>
-        <a class="paginator__item">1</a>
-    </li>
-    <li>
-        <a class="paginator__item" href="">2</a>
-    </li>
+      <?php for($i = 1; $i <= $pageCount; $i++) : ?>
+        <li>
+            <a class="paginator__item" <?= $i == $currentPage ? "" : "href=\"/admin/products/?page=${i}\"" ?>><?= $i ?></a>
+        </li>
+      <?php endfor; ?>
     </ul>
 </main>
 <?php include $_SERVER['DOCUMENT_ROOT'] . '/templates/footer.php'; ?>

@@ -3,7 +3,7 @@
     include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/connectToDb.php';
     include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/readCategories.php';
     include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/getProduct.php';
-    include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/getProductsList.php';
+    include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/readGoods.php';
 
     $connect = getConnect();
     $categories = readCategories($connect);
