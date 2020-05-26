@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         if ($_POST['delivery'] == "dev-yes") {
             $orderInfo['delivery'] = "Курьер";
-            if ($orderInfo['price'] > PRICE_FREE_DEL) {
+            if ($orderInfo['price'] < PRICE_FREE_DEL) {
                 $orderInfo['price'] += DELIVERY_PRICE;
             }
             $orderInfo['address'] = "г. " . clean($_POST['city']) . ", ул. " . clean($_POST['street']) . ", д. " . clean($_POST['home']) . ", кв. " . clean($_POST['aprt']);

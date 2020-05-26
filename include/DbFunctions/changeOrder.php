@@ -5,6 +5,6 @@
  */
 
 function changeOrderStatus($connect, $id, $newStatus) {
-    $sql = sprintf("update orders set status = '%s' where id=%d", mysqli_real_escape_string($connect, $newStatus), $id);
+    $sql = sprintf("update orders set status = '%s' where id=%d", mysqli_real_escape_string($connect, $newStatus), intval($id));
     return mysqli_query($connect, $sql);
 }

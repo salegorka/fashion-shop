@@ -32,7 +32,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/include/auth/auth.php';
   <form class="custom-form" action="/admin/" method="post">
     <?php if(isset($form_error)) : ?>
         <p><?= $form_error ?></p>
-    <? endif ; ?>
+    <?php endif; ?>
     <input name="email" type="email" class="custom-form__input" required="" value="<?= isset($form_error) ? $_POST['email'] : ""; ?>">
     <input name="password" type="password" class="custom-form__input" required="" value="<?= isset($form_error) ? $_POST['password'] : ""; ?>">
     <button name="auth" class="button" type="submit">Войти в личный кабинет</button>

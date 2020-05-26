@@ -111,6 +111,9 @@ if (categoryName === undefined) {
   categoryId = 0;
   if (location.pathname.split('/')[1] === 'new') {
     catNew = 1;
+
+    //kjk
+
   }
   if (location.pathname.split('/')[1] === 'sale') {
     catSale = 1;
@@ -137,18 +140,26 @@ if (shopFilter) {
   // Изменение параметров фильтра для чекбоксов новинка и распродажа
 
   let inputNew = shopFilter.querySelector('input[id="new"]');
-  console.log(inputNew);
+  if (Goodfilter.catNew == 1) {
+    inputNew.checked = true;
+  }
   inputNew.addEventListener('change', (event) => {
     if(inputNew.checked) {
       Goodfilter.catNew = 1;
+    } else {
+      Goodfilter.catNew = 0;
     }
   })
 
   let inputSale = shopFilter.querySelector('input[id="sale"]');
-  console.log(inputSale);
+  if (Goodfilter.catSale == 1) {
+    inputSale.checked = true;
+  }
   inputSale.addEventListener('change', (event) => {
     if(inputSale.checked) {
       Goodfilter.catSale = 1;
+    } else {
+      Goodfilter.catSale = 0;
     }
   })
 
@@ -221,6 +232,13 @@ const labelHidden = (form) => {
     }
   });
 };
+
+const showLabel = (input) => {
+  const label = input.nextElementSibling;
+  if (!input.value) {
+    label.hidden = false;
+  }
+}
 
 const toggleDelivery = (elem) => {
 
@@ -337,7 +355,6 @@ if (shopList) {
       shopList.innerHTML = respond;
     })
   }
- 
 
 
   shopList.addEventListener('click', (evt) => {
@@ -347,8 +364,6 @@ if (shopList) {
     if (prod.some(pathItem => pathItem.classList && pathItem.classList.contains('shop__item'))) {
 
       // Добавление в заказ информации о товаре
-
-      console.log(evt.target);
 
       let productName = evt.target.querySelector(".product__name").innerText;
       let productPrice = evt.target.querySelector(".product__price").innerText;
@@ -369,93 +384,109 @@ if (shopList) {
       shopOrder.classList.add('fade');
       setTimeout(() => shopOrder.classList.remove('fade'), 1000);
 
-      const form = shopOrder.querySelector('.custom-form');
-      labelHidden(form);
-
-      toggleDelivery(shopOrder);
-
-      const buttonOrder = shopOrder.querySelector('.button');
-      const popupEnd = document.querySelector('.shop-page__popup-end');
-
-      buttonOrder.addEventListener('click', (evt) => {
-
-        form.noValidate = true;
-
-        const inputs = Array.from(shopOrder.querySelectorAll('[required]'));
-
-        inputs.forEach(inp => {
-
-          if (!!inp.value) {
-
-            if (inp.classList.contains('custom-form__input--error')) {
-              inp.classList.remove('custom-form__input--error');
-            }
-
-          } else {
-
-            inp.classList.add('custom-form__input--error');
-
-          }
-        });
-
-        if (inputs.every(inp => !!inp.value)) {
-
-          evt.preventDefault();
-
-          // Отправка заказа
-
-          let url = '/api/createOrder.php';
-          let data = order;
-          $.ajax({
-            url: url,
-            type: 'POST',
-            data: data,
-            dataType: 'json',
-            success: function ( respond, textStatus, jqXHR) {
-              if (respond.success == true) {
-
-                toggleHidden(shopOrder, popupEnd);
-
-                popupEnd.classList.add('fade');
-                setTimeout(() => popupEnd.classList.remove('fade'), 1000);
-
-                window.scroll(0, 0);
-
-                const buttonEnd = popupEnd.querySelector('.button');
-
-                buttonEnd.addEventListener('click', () => {
-
-
-                  popupEnd.classList.add('fade-reverse');
-
-                  setTimeout(() => {
-
-                    popupEnd.classList.remove('fade-reverse');
-
-                    toggleHidden(popupEnd, document.querySelector('.intro'), document.querySelector('.shop'));
-
-                  }, 1000);
-
-                });
-
-
-              } else {
-                console.log(textStatus, respond);
-              }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-              console.log("Ошибка AJAX запроса " + textStatus);
-            }
-          })
-
-
-        } else {
-          window.scroll(0, 0);
-          evt.preventDefault();
-        }
-      });
     }
   });
+
+  const shopOrder = document.querySelector('.shop-page__order');
+  const form = shopOrder.querySelector('.custom-form');
+  labelHidden(form);
+  toggleDelivery(shopOrder);
+
+  const buttonOrder = shopOrder.querySelector('.button');
+  const popupEnd = document.querySelector('.shop-page__popup-end');
+
+  buttonOrder.addEventListener('click', (evt) => {
+
+    const shopOrder = document.querySelector('.shop-page__order');
+    const form = shopOrder.querySelector('.custom-form');
+
+    form.noValidate = true;
+
+    console.log("ЗАказ");
+
+    const inputs = Array.from(shopOrder.querySelectorAll('[required]'));
+
+    inputs.forEach(inp => {
+
+      if (!!inp.value) {
+
+        if (inp.classList.contains('custom-form__input--error')) {
+          inp.classList.remove('custom-form__input--error');
+        }
+
+      } else {
+
+        inp.classList.add('custom-form__input--error');
+
+      }
+    });
+
+    if (inputs.every(inp => !!inp.value)) {
+
+      // Отправка заказа
+      evt.preventDefault();
+
+      let url = '/api/createOrder.php';
+      let data = order;
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        dataType: 'json',
+        success: function ( respond, textStatus, jqXHR) {
+          if (respond.success == true) {
+
+            // Очистка текстовых полей формы
+
+            const textInputs = Array.from(shopOrder.querySelectorAll('.custom-form__input'));
+            textInputs.forEach((input) => {
+              input.value = '';
+              showLabel(input);
+              delete(order[input.getAttribute('name')]);
+            })
+            const textArea = shopOrder.querySelector('textarea');
+            textArea.value = '';
+            delete(order[textArea.getAttribute('name')]);
+
+            toggleHidden(shopOrder, popupEnd);
+
+            popupEnd.classList.add('fade');
+            setTimeout(() => popupEnd.classList.remove('fade'), 1000);
+
+            window.scroll(0, 0);
+
+          } else {
+            console.log(textStatus, respond);
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log("Ошибка AJAX запроса " + textStatus);
+        }
+      })
+
+    } else {
+      window.scroll(0, 0);
+      evt.preventDefault();
+    }
+  });
+
+  const buttonEnd = popupEnd.querySelector('.button');
+
+  buttonEnd.addEventListener('click', () => {
+
+    popupEnd.classList.add('fade-reverse');
+
+    setTimeout(() => {
+
+      popupEnd.classList.remove('fade-reverse');
+
+      toggleHidden(popupEnd, document.querySelector('.intro'), document.querySelector('.shop'));
+
+    }, 1000);
+
+  });
+
+
 }
 
 const pageOrderList = document.querySelector('.page-order__list');
