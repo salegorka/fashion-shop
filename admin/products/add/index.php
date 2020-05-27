@@ -12,7 +12,8 @@
 
     if (isset($_GET['change'])) {
         $product = getProduct($connect, $_GET['change']);
-        $productCategories = array_pop(getCategories($connect, [$_GET['change']]));
+        $categoriesArr = getCategories($connect, [$_GET['change']]);
+        $productCategories = array_pop($categoriesArr);
         if (empty($productCategories)) {
             $productCategories[] = "Нет категории";
         }

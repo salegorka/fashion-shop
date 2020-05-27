@@ -14,6 +14,8 @@ function deleteGood($connect, $id) {
 function getImageToDelete($connect, $id) {
     $sql = sprintf("select image from goods where id=%d;", $id);
     $result = mysqli_query($connect, $sql);
-    return array_shift(mysqli_fetch_all($result, MYSQLI_ASSOC))['image'];
+    $resultArr = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $imageArr = array_shift($resultArr);
+    return $imageArr['image'];
 }
 

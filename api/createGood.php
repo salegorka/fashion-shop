@@ -42,12 +42,12 @@ if(isset($_POST['product-name'])) {
         }
 
     } else {
-        echo json_encose(['error' => "Файл не выбран"]);
+        echo json_encode(['error' => "Файл не выбран"]);
         exit();
     }
 
     $connect = getConnect();
-    $id = createGood($connect, $_POST['product-name'], $_POST['product-price'], $_POST['sale'] == 'on' ? 1 : 0, $_POST['new'] == 'on' ? 1 : 0);
+    $id = createGood($connect, $_POST['product-name'], $_POST['product-price'], isset($_POST['sale']) ? 1 : 0, isset($_POST['new']) ? 1 : 0);
     if (isset($_FILES['product-photo'])) {
         $tmpname = $_FILES['product-photo']['tmp_name'];
         $name = "product-" . $id . ".jpg";

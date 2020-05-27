@@ -3,4 +3,4 @@
 define("DB_HOST", "localhost");
 define("DB_USER", "root");
 define("DB_PASS", "");
-define("DB_NAME", "shop_fashion");
+define("DB_NAME", "fashion_shop_schema");

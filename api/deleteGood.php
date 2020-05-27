@@ -9,7 +9,9 @@ include $_SERVER['DOCUMENT_ROOT'] . '/include/DbFunctions/deleteGood.php';
 
 $connect = getConnect();
 $image = getImageToDelete($connect, $_POST['id']);
-unlink($_SERVER['DOCUMENT_ROOT'] . $image);
+if ($image) {
+    unlink($_SERVER['DOCUMENT_ROOT'] . $image);
+}
 deleteGood($connect, $_POST['id']);
 mysqli_close($connect);
 echo json_encode(['success' => true]);
